@@ -24,7 +24,7 @@ python3 -m room_checker check bookings.csv "Board Room" 2026-11-12 10:10 11:00
 ## Test
 
 ```
-python3 -m unittest
+python3 run_tests.py
 ```
 
 ## Layout

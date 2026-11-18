@@ -21,8 +21,15 @@ def run(*argv):
 def check(room, date, start, end):
     return run("check", SAMPLE, room, date, start, end)
 
+
 class ReportTests(unittest.TestCase):
     def test_sample_file_report(self):
+        """
+        Input:    report on the sample bookings.csv
+        Expected: 6 conflicts (#1-#2, #2-#3 from Board Room cleaning time;
+                  #7-#8, #7-#9, #7-#10, #8-#10 in Training), then
+                  "Invalid: #12 (end is not after start)". Exit code 0.
+        """
         code, out, _ = run("report", SAMPLE)
         self.assertEqual(code, 0)
         self.assertEqual(
@@ -37,6 +44,10 @@ class ReportTests(unittest.TestCase):
         )
 
     def test_missing_file(self):
+        """
+        Input:    report on a file that doesn't exist
+        Expected: exit code 2, nothing on stdout, "Error" message on stderr
+        """
         code, out, err = run("report", "does_not_exist.csv")
         self.assertEqual((code, out), (2, ""))
         self.assertIn("Error", err)
@@ -44,9 +55,18 @@ class ReportTests(unittest.TestCase):
 
 class CheckTests(unittest.TestCase):
     def test_available(self):
+        """
+        Input:    check Huddle A, 2026-11-12, 15:00-16:00
+        Expected: "Available" (#11 ends at 15:00 and Huddle A has no cleaning time)
+        """
         self.assertEqual(check("Huddle A", "2026-11-12", "15:00", "16:00")[1], "Available\n")
 
     def test_cancelled_booking_does_not_block(self):
+        """
+        Input:    check Huddle A, 2026-11-12, 13:00-14:00
+        Expected: "Not available: conflicts with #5"
+                  (#4 uses the same slot but is cancelled, so it's ignored)
+        """
         # #4 (13:00-14:00) is cancelled, only #5 blocks
         self.assertEqual(
             check("Huddle A", "2026-11-12", "13:00", "14:00")[1],
@@ -54,6 +74,13 @@ class CheckTests(unittest.TestCase):
         )
 
     def test_board_room_cleaning_applies_to_request(self):
+        """
+        Input:    Board Room requests on 2026-11-12
+        Expected: 10:10-10:20 -> "Not available: conflicts with #1, #2, #3"
+                  11:15-12:00 -> "Available" (#3 ends 11:00 + 15 min cleaning)
+                  11:14-12:00 -> conflicts with #3 (one minute too early)
+                  Room name matching ignores case ("board room").
+        """
         self.assertEqual(
             check("Board Room", "2026-11-12", "10:10", "10:20")[1],
             "Not available: conflicts with #1, #2, #3\n",
@@ -62,6 +89,11 @@ class CheckTests(unittest.TestCase):
         self.assertIn("#3", check("board room", "2026-11-12", "11:14", "12:00")[1])
 
     def test_bad_request_is_a_clean_error(self):
+        """
+        Input:    check Huddle A with times 25:00-26:00
+        Expected: exit code 2, nothing on stdout, "Error" message on stderr
+                  (no crash or traceback)
+        """
         code, out, err = check("Huddle A", "2026-11-12", "25:00", "26:00")
         self.assertEqual((code, out), (2, ""))
         self.assertIn("Error", err)
@@ -69,3 +101,4 @@ class CheckTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    
