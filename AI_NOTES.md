@@ -9,6 +9,8 @@ In order to have AI take the lead on this project I created a folder in Claude t
 - For the first initial push AI wrote the code base after I asked for a mock design and we went back and forth deciding on which files to add and why they were important to the code base. When I needed to fix or implemt little things such as the test it coded them for me. I also went back and asked it for a few changes when it came to parsing the command line arguments for users to check if a room was avaliable.
 - After that it was just little comments about what we needed to change whether it was to make the User Experience better or because it got a specific file wrong or it wasn't testing properly.
 
+- For the UI i specfied what look I wanted, in this case I wanted it to look like notion calendar so I told the AI to make it look like that and also highlight the bookings in RED if they have time conflicts. I asked for it to also show on the right side of the calendar which meeting ID's had time conflicts. I also wanted each room to have their own slot and color associated with the room it belongs to. Since this is for office use the calendar is shown from 07:00 to 18:00
+
 ## Moments the AI got something wrong
 
 1. In the inital review which just consisted of the testing aspect, it did not write how to test the code properly. When running the unit tests it specificied to use “python -m unittests” when it should have been “python3 -m unittests”
