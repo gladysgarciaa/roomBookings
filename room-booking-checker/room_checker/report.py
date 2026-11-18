@@ -22,3 +22,13 @@ def format_availability(conflicting_ids):
     if not conflicting_ids:
         return "Available"
     return "Not available: conflicts with " + ", ".join("#%d" % i for i in conflicting_ids)
+
+#stretch goal
+def format_busiest(rows):
+    lines = []
+    for date, room, minutes, count in rows:
+        lines.append(
+            "%s: %s (%d min, %d booking%s)"
+            % (date.isoformat(), room.title(), minutes, count, "" if count == 1 else "s")
+        )
+    return "\n".join(lines)

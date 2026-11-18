@@ -56,8 +56,13 @@ python3 run_tests.py
 - Blank lines are skipped. Header names are matched ignoring case/spaces; column order doesn't matter.
 - For `check`, invalid CSV rows are skipped just like in `report`.
 
-## With more time
+## Stretch Goal
 
-- Suggest the next free slot (stretch goal); the per-room config already supports the "configurable cleaning time" goal.
-- Read cleaning times from a file instead of `config.py`.
-- Reject requests that cross midnight explicitly with a clearer message.
+- We want to show the busiest room on each date so we had to create a new file `stats.py`
+  that reports how many minutes and meetings a room has booked.
+
+to run the busiest day report
+
+```
+python3 -m room_checker busiest bookings.csv
+```

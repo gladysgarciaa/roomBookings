@@ -5,8 +5,8 @@ import sys
 
 from .conflicts import check_availability, find_conflicts
 from .parsing import MissingColumnsError, load_bookings, parse_request
-from .report import format_availability, format_report
-
+from .report import format_availability, format_busiest, format_report
+from .stats import busiest_rooms
 
 def build_parser():
     parser = argparse.ArgumentParser(prog="room_checker", description="Room booking checker")
@@ -14,6 +14,9 @@ def build_parser():
 
     report = sub.add_parser("report", help="list conflicts and invalid rows")
     report.add_argument("csv_file")
+
+    busiest = sub.add_parser("busiest", help="show the busiest room on each date")
+    busiest.add_argument("csv_file")
 
     check = sub.add_parser("check", help="check whether a room is free")
     check.add_argument("csv_file")
@@ -46,10 +49,13 @@ def main(argv=None):
 
     if args.command == "report":
         output = format_report(find_conflicts(bookings), invalid)
+    elif args.command == "busiest":
+        output = format_busiest(busiest_rooms(bookings))
     else:
         room, date, start, end = request
         output = format_availability(check_availability(bookings, room, date, start, end))
 
+        
     if output:
         print(output)
     return 0
