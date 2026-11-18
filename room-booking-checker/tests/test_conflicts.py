@@ -11,6 +11,8 @@ from room_checker.conflicts import (
 from room_checker.models import Booking
 from room_checker.parsing import parse_bookings
 
+# hardcoding the dates need to make it so it parses throughthe file
+
 D1 = datetime.date(2026, 11, 12)
 D2 = datetime.date(2026, 11, 13)
 

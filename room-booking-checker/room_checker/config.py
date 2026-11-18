@@ -3,7 +3,7 @@
 Keys are NORMALIZED room names (stripped, lower-case). Rooms not listed here
 need no cleaning time.
 """
-
+# Hashmap for adding cleaning minutes to different rooms if needed
 CLEANING_MINUTES = {
     "board room": 15,
 }

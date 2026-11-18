@@ -17,10 +17,10 @@ def build_parser():
 
     check = sub.add_parser("check", help="check whether a room is free")
     check.add_argument("csv_file")
-    check.add_argument("--room", required=True)
-    check.add_argument("--date", required=True, help="YYYY-MM-DD")
-    check.add_argument("--start", required=True, help="HH:MM (24-hour)")
-    check.add_argument("--end", required=True, help="HH:MM (24-hour)")
+    check.add_argument("room")
+    check.add_argument("date", help="YYYY-MM-DD")
+    check.add_argument("start", help="HH:MM (24-hour)")
+    check.add_argument("end", help="HH:MM (24-hour)")
     return parser
 
 

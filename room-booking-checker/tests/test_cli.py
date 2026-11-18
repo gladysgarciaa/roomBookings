@@ -19,8 +19,7 @@ def run(*argv):
 
 
 def check(room, date, start, end):
-    return run("check", SAMPLE, "--room", room, "--date", date, "--start", start, "--end", end)
-
+    return run("check", SAMPLE, room, date, start, end)
 
 class ReportTests(unittest.TestCase):
     def test_sample_file_report(self):

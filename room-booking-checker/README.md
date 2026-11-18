@@ -4,39 +4,49 @@ Finds double-booked meeting rooms in a bookings CSV and checks whether a room is
 Python 3.8+, standard library only.
 
 ## Install
+
 Nothing to install. Run all commands from this folder.
 
 ## Run
+
 ```
-python -m room_checker report bookings.csv
-python -m room_checker check bookings.csv --room "Board Room" --date 2026-11-12 --start 10:10 --end 11:00
+- running the report on what rooms have the time conflicts:
+python3 -m room_checker.main report bookings.csv
+
+- "Adding" a new booking to see whether the room is avaliable at that time :
+python3 -m room_checker check bookings.csv "Board Room" 2026-11-12 10:10 11:00
 ```
+
 - `report` prints conflicts (sorted by first ID, then second; lower ID first), then invalid rows sorted by ID. Prints nothing if there are none.
 - `check` prints `Available`, or `Not available: conflicts with #1, #2`.
 - Exit code 0 on success, 2 if the file is unreadable, the header is missing columns, or the request is malformed (message on stderr).
 
 ## Test
+
 ```
-python -m unittest
+python3 -m unittest
 ```
 
 ## Layout
-| File | Purpose |
-|---|---|
-| `room_checker/config.py` | Cleaning minutes per (normalized) room. Board Room = 15. |
-| `room_checker/models.py` | `Booking` and `InvalidRow` dataclasses. Times are minutes since midnight. |
-| `room_checker/parsing.py` | CSV to valid bookings + invalid rows; request validation. |
-| `room_checker/conflicts.py` | Overlap rule, conflict report, availability check. |
-| `room_checker/report.py` | Output formatting. |
-| `room_checker/cli.py` | Argument parsing; wires everything together. |
-| `room_checker/__main__.py` | Makes `python -m room_checker` work. |
+
+| File                        | Purpose                                                                   |
+| --------------------------- | ------------------------------------------------------------------------- |
+| `room_checker/config.py`    | Cleaning minutes per (normalized) room. Board Room = 15.                  |
+| `room_checker/models.py`    | `Booking` and `InvalidRow` dataclasses. Times are minutes since midnight. |
+| `room_checker/parsing.py`   | CSV to valid bookings + invalid rows; request validation.                 |
+| `room_checker/conflicts.py` | Overlap rule, conflict report, availability check.                        |
+| `room_checker/report.py`    | Output formatting.                                                        |
+| `room_checker/cli.py`       | Argument parsing; wires everything together.                              |
+| `room_checker/__main__.py`  | Makes `python3 -m room_checker` work.                                     |
 
 ## How the rules are implemented
+
 - Two bookings clash if same room key, same date, `a.start < b.end + cleaning(b)` and `b.start < a.end + cleaning(a)`. Back-to-back is therefore fine, except in rooms with cleaning time.
 - Availability wraps the request as a temporary booking and uses the same `overlaps` function, so the cleaning rule applies to the requested slot too.
 - Room key = `strip().lower()` only; inner spaces are not collapsed.
 
 ## Assumptions
+
 - Cleaning time applies to every Board Room pair, so #2 (ends 10:30) and #3 (starts 10:30) conflict in the sample data.
 - Cancelled rows are ignored completely, even if otherwise malformed (not reported as invalid).
 - A status other than confirmed/cancelled (case and outer spaces ignored) is invalid.
@@ -47,6 +57,7 @@ python -m unittest
 - For `check`, invalid CSV rows are skipped just like in `report`.
 
 ## With more time
+
 - Suggest the next free slot (stretch goal); the per-room config already supports the "configurable cleaning time" goal.
 - Read cleaning times from a file instead of `config.py`.
 - Reject requests that cross midnight explicitly with a clearer message.
